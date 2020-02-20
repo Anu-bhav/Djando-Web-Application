@@ -2,3 +2,10 @@ To run the web app
     pipenv shell
     python manage.py runserver
 
+To run migration
+    python manage.py migrate
+
+To create admin superuser
+    python manage.py createsuperuser
+    username: admin
+    password: Password123.
