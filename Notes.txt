@@ -1,0 +1,4 @@
+To run the web app
+    pipenv shell
+    python manage.py runserver
+
