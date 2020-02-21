@@ -98,10 +98,14 @@ To run interactive python shell that works with the django objects
     
 Register models in blog/admin.py for it to show up in admin panel
 
-install crispy-forms to prettify django forms
+Install crispy-forms to prettify django forms
     pipenv install django-crispy-forms
 
-add it to settings.py and make it use bootstrap4
+Add it to settings.py and make it use bootstrap4
     CRISPY_TEMPLATE_PACK =  'bootstrap4'
     
+To change media root
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_URL = '/media/'
 
+code snippets: https://github.com/CoreyMSchafer/code_snippets/tree/master/Django_Blog/snippets
