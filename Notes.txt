@@ -9,3 +9,87 @@ To create admin superuser
     python manage.py createsuperuser
     username: admin
     password: Password123.
+
+To generate migration file for models
+    python manage.py makemigrations
+
+To view the SQL code for a migration
+    python manage.py sqlmigrate (AppName) (MigrationNumber)
+    python manage.py sqlmigrate blog 0001
+
+To run interactive python shell that works with the django objects
+    python manage.py shell
+
+        $ python manage.py shell
+        Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
+        Type "help", "copyright", "credits" or "license" for more information.
+        (InteractiveConsole)
+        >>> from blog.models import Post
+        >>> from django.contrib.auth.models import User
+        >>> User.objects.all()
+        <QuerySet [<User: admin>, <User: user>]>
+        >>> User.objects.first() 
+        <User: admin>
+        >>> User.objects.filter(username="User") 
+        <QuerySet []>
+        >>> User.objects.filter(username="user") 
+        <QuerySet [<User: user>]>
+        >>> User.objects.filter(username="admin") 
+        <QuerySet [<User: admin>]>
+        >>> User.objects.filter(username="admin").first()
+        <User: admin>
+        >>> user = User.objects.filter(username="admin").first() 
+        >>> user
+        <User: admin>
+        >>> user.id
+        1
+        >>> user.pk
+        1
+        >>> user = User.objects.get(id=1)
+        >>> user
+        <User: admin>
+        >>> Post.objects.all()
+        <QuerySet []>
+        >>> post_1 = Post(title='Blog One', content='First Post Content Here!!', author=user) # create post 1
+        >>> Post.objects.all()
+        <QuerySet []>
+        >>> post_1.save() # post save    
+        >>> Post.objects.all() # get all posts from database
+        <QuerySet [<Post: Post object (1)>]>
+        >>> exit()
+    
+    After adding __str__ in Post model
+        >>> from blog.models import Post
+        >>> from django.contrib.auth.models import User
+        >>> Post.objects.all()
+        <QuerySet [<Post: Blog One>]>
+        >>> User.objects.get(id=1)
+        <User: admin>
+        >>> user = User.objects.filter(username='admin').first()
+        >>> user = User.objects.filter(username='user').first()  
+        >>> post_2 = Post(title='Blog Two', content='This is post two',author_id=user.id) # create post 2
+        >>> post_2.save()
+        >>> Post.objects.all() # query post table for all posts
+        <QuerySet [<Post: Blog One>, <Post: Blog Two>]>
+        >>> post = Post.objects.first()
+        >>> post.content
+        'First Post Content Here!!'
+        >>> post.date_posted
+        datetime.datetime(2020, 2, 21, 4, 44, 48, 494623, tzinfo=<UTC>)
+        >>> post.author
+        <User: admin>
+        >>> post.author.id
+        1
+        >>> user  
+        <User: user>
+        >>> user.post_set # get all posts for this specific user -- (usermodel).(postmodelname)_set - user.post_set
+        <django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x000001339A9012E8>
+        >>> user.post_set.all()
+        <QuerySet [<Post: Blog Two>]>
+        >>> user.post_set.create(title='Blog Three', content='This is blog three') # create post 3, no need to specify author here
+        <Post: Blog Three>
+        >>> Post.objects.all() # no need to save also, this is done automatically
+        <QuerySet [<Post: Blog One>, <Post: Blog Two>, <Post: Blog Three>]>
+        >>> exit()
+    
+    Register models in blog/admin.py for it to show up in admin panel
