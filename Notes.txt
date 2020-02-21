@@ -2,6 +2,10 @@ To run the web app
     pipenv shell
     python manage.py runserver
 
+To create a new app
+    python manage.py startapp blog # where blog is the appname
+    Upon creating a new app, add it to the project settings.py
+
 To run migration
     python manage.py migrate
 
@@ -92,4 +96,12 @@ To run interactive python shell that works with the django objects
         <QuerySet [<Post: Blog One>, <Post: Blog Two>, <Post: Blog Three>]>
         >>> exit()
     
-    Register models in blog/admin.py for it to show up in admin panel
+Register models in blog/admin.py for it to show up in admin panel
+
+install crispy-forms to prettify django forms
+    pipenv install django-crispy-forms
+
+add it to settings.py and make it use bootstrap4
+    CRISPY_TEMPLATE_PACK =  'bootstrap4'
+    
+
