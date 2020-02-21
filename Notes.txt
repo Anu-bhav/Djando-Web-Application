@@ -109,3 +109,6 @@ To change media root
     MEDIA_URL = '/media/'
 
 code snippets: https://github.com/CoreyMSchafer/code_snippets/tree/master/Django_Blog/snippets
+
+To perform certain actions on specific events, make use of signals - User Profile and Picture
+
