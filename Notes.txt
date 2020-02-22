@@ -112,3 +112,46 @@ code snippets: https://github.com/CoreyMSchafer/code_snippets/tree/master/Django
 
 To perform certain actions on specific events, make use of signals - User Profile and Picture
 
+To load posts from posts.json from python interactive shell
+    python manage.py shell
+    >>> import json
+    >>> from blog.models import Post
+    >>> 
+    >>> with open('posts.json') as f:
+    ...     posts_json = json.load(f)
+    ... 
+    >>> for post in posts_json: 
+    ...     post=Post(title=post['title'], content=post['content'], author_id=post['user_id'])
+    ...     post.save()
+    ... 
+    >>> exit()
+
+How Paginator object works?
+    >>> from django.core.paginator import Paginator
+    >>> posts = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11' ] 
+    >>> p = Paginator(posts, 4)
+    >>> p
+    <django.core.paginator.Paginator object at 0x000001ECE45D1048>
+    >>> p.num_pages
+    3   
+    >>> for page in p.page_range:
+    ...     print(page)
+    ... 
+    1   
+    2   
+    3   
+    >>> p1 = p.page(1)
+    >>> p1
+    <Page 1 of 3>
+    >>> p1.number
+    1   
+    >>> p1.object_list
+    ['1', '2', '3', '4']
+    >>> p1.has_previous()
+    False
+    >>> p1.has_next()
+    True
+    >>> p1.next_page_number()
+    2
+    >>>exit()
+

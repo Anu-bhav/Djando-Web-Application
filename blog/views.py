@@ -1,14 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.views.generic import (
     ListView,
     DetailView,
     CreateView,
     UpdateView,
-    DeleteView
+    DeleteView,
 )
-from .models import Post # . means in current directory
-#from django.http import HttpResponse
+from .models import Post  # . means in current directory
+
+# from django.http import HttpResponse
 
 # Create your views here.
 
@@ -27,48 +29,70 @@ from .models import Post # . means in current directory
 #     }
 # ]
 
-
+# function based views - Not using anymore
 def home(request):
     # passing posts which is a list[] of dict{} containing multiple posts
     # context = {
     #     'posts': posts
     # }
-    context = {
-        'posts': Post.objects.all()
-    }
+    context = {"posts": Post.objects.all()}
     # return HttpResponse('<h1>Blog Home</h1>')
     return render(request, "blog/home.html", context)
 
+
+# class based views
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html'  # <app><model>_<viewtype>.html
-    context_object_name = 'posts'  # same name as context in home function as home.html is expecting 'posts'
-    ordering = ['-date_posted']     # default is asc but adding the - before makes it order in desc
+    template_name = "blog/home.html"  # <app><model>_<viewtype>.html
+    context_object_name = "posts"  # same name as context in home function as home.html is expecting 'posts'
+    ordering = [
+        "-date_posted"
+    ]  # default is asc but adding the - before makes it order in desc
+    paginate_by = 5
+
+
+class UserPostListView(ListView):
+    model = Post
+    template_name = "blog/user_posts.html"  # <app><model>_<viewtype>.html
+    context_object_name = "posts"  # same name as context in home function as home.html is expecting 'posts'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get("username"))
+        return Post.objects.filter(author=user).order_by("-date_posted")
+
 
 class PostDetailView(DetailView):
     # <app>/<model>_<viewtype>.html
     model = Post
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     # <app>/<model>_<viewtype>.html
     # create and update have same page, default naming convention is <app>/<model>_form.html
     # blog/post_form.html
     model = Post
-    fields = ['title', 'content']
+    fields = ["title", "content"]
 
     def form_valid(self, form):
-        form.instance.author = self.request.user    # we are setting the author id here before the form is save by overridding the form_valid function
+        form.instance.author = (
+            self.request.user
+        )  # we are setting the author id here before the form is save by overridding the form_valid function
         return super().form_valid(form)
 
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):    # the mixins must always be passed first
+class PostUpdateView(
+    LoginRequiredMixin, UserPassesTestMixin, UpdateView
+):  # the mixins must always be passed first
     model = Post
-    fields = ['title', 'content']
+    fields = ["title", "content"]
 
     def form_valid(self, form):
-        form.instance.author = self.request.user    # we are setting the author id here before the form is save by overridding the form_valid function
+        form.instance.author = (
+            self.request.user
+        )  # we are setting the author id here before the form is save by overridding the form_valid function
         return super().form_valid(form)
-    
+
     # prevent other users from editing another user's post
     def test_func(self):
         post = self.get_object()
@@ -87,9 +111,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
-    
+
 
 def about(request):
-    return render(request, "blog/about.html", {'title': 'About'})
-
+    return render(request, "blog/about.html", {"title": "About"})
 
